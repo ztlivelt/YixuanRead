@@ -15,6 +15,8 @@ import com.guider.yixuanread.base.BaseActivity;
 import com.guider.yixuanread.db.Book;
 import com.guider.yixuanread.filechoose.FileChooseActivity;
 
+import org.litepal.crud.DataSupport;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,6 +68,7 @@ public class MainActivity extends BaseActivity implements ShelfAdapter.ShelfList
             book.setBookname("书集：" + i);
             bookList.add(book);
         }
+        bookList = DataSupport.findAll(Book.class);
         shelfAdapter = new ShelfAdapter(this,bookList,this);
         GridLayoutManager layoutManager = new GridLayoutManager(this,3);
         boolShelfView.setLayoutManager(layoutManager);
