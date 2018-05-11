@@ -3,6 +3,7 @@ package com.guider.yixuanread;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -104,6 +105,7 @@ public class ReadActivity extends BaseActivity {
     @Override
     protected void initData() {
         initActionBar();
+        settingDialog = new SettingDialog(this);
         pageModeDialog = new PageModeDialog(this);
         //保持屏幕常亮
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -184,6 +186,40 @@ public class ReadActivity extends BaseActivity {
                 bookPage.setPageMode(pageMode);
             }
         });
+
+        settingDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                hideSystemUI();
+            }
+        });
+
+        settingDialog.setSettingListener(new SettingDialog.SettingListener() {
+            @Override
+            public void changeSystemBright(boolean isSystem, float brightness) {
+//                if (!isSystem) {
+//                    BrightnessUtil.setBrightness(ReadActivity.this, brightness);
+//                } else {
+//                    int bh = BrightnessUtil.getScreenBrightness(ReadActivity.this);
+//                    BrightnessUtil.setBrightness(ReadActivity.this, bh);
+//                }
+            }
+
+            @Override
+            public void changeFontSize(int fontSize) {
+                pageFactory.changeFontSize(fontSize);
+            }
+
+            @Override
+            public void changeTypeFace(Typeface typeface) {
+                pageFactory.changeTypeface(typeface);
+            }
+
+            @Override
+            public void changeBookBg(int type) {
+                pageFactory.changeBookBg(type);
+            }
+        });
     }
 
     private void initActionBar(){
@@ -206,6 +242,12 @@ public class ReadActivity extends BaseActivity {
                     hideReadSetting();
                     return true;
                 }
+
+                if (settingDialog.isShowing()){
+                    settingDialog.hide();
+                    return true;
+                }
+
                 if (pageModeDialog.isShowing()){
                     pageModeDialog.hide();
                     return true;
@@ -350,6 +392,8 @@ public class ReadActivity extends BaseActivity {
                 pageModeDialog.show();
                 break;
             case R.id.settingBtn:
+                hideReadSetting();
+                settingDialog.show();
                 break;
             case R.id.stopReadTvBtn:
                 break;
