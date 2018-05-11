@@ -157,6 +157,7 @@ public class PageWidget extends View {
                     }
                     moveX = x;
                     moveY = y;
+                    isRuning = true;
                     this.postInvalidate();
                 }
                 break;
@@ -169,6 +170,7 @@ public class PageWidget extends View {
                         if (mTouchListener != null){
                             mTouchListener.center();
                         }
+                        return true;
                     } else if ( x < mScreenWidth / 2){
                         isNext = false;
                     } else {

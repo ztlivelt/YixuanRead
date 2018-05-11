@@ -1,12 +1,14 @@
 package com.guider.yixuanread;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,6 +21,8 @@ import android.widget.TextView;
 import com.guider.yixuanread.base.BaseActivity;
 import com.guider.yixuanread.base.Config;
 import com.guider.yixuanread.db.Book;
+import com.guider.yixuanread.dialog.PageModeDialog;
+import com.guider.yixuanread.dialog.SettingDialog;
 import com.guider.yixuanread.widget.PageFactory;
 import com.guider.yixuanread.widget.PageWidget;
 
@@ -78,6 +82,8 @@ public class ReadActivity extends BaseActivity {
     //popwindow是否显示
     private boolean isShow = false;
     private boolean mDayOrNight;
+    private SettingDialog settingDialog;
+    private PageModeDialog pageModeDialog;
     //语音合成
     private boolean isSpeaking = false;
 
@@ -98,7 +104,7 @@ public class ReadActivity extends BaseActivity {
     @Override
     protected void initData() {
         initActionBar();
-
+        pageModeDialog = new PageModeDialog(this);
         //保持屏幕常亮
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         //隐藏
@@ -118,7 +124,7 @@ public class ReadActivity extends BaseActivity {
         bookPage.setPageMode(config.getPageMode());
         pageFactory.setPageWidget(bookPage);
         pageFactory.openBook(book);
-        //initDayOrNigth();
+        initDayOrNigth();
 
 
     }
@@ -166,6 +172,18 @@ public class ReadActivity extends BaseActivity {
                 pageFactory.cancelPage();
             }
         });
+        pageModeDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                hideSystemUI();
+            }
+        });
+        pageModeDialog.setPageModeListener(new PageModeDialog.PageModeListener() {
+            @Override
+            public void changePageMode(int pageMode) {
+                bookPage.setPageMode(pageMode);
+            }
+        });
     }
 
     private void initActionBar(){
@@ -178,6 +196,33 @@ public class ReadActivity extends BaseActivity {
                 finish();
             }
         });
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode){
+            case KeyEvent.KEYCODE_BACK:
+                if (isShow){
+                    hideReadSetting();
+                    return true;
+                }
+                if (pageModeDialog.isShowing()){
+                    pageModeDialog.hide();
+                    return true;
+                }
+                finish();
+                break;
+        }
+        return super.onKeyDown(keyCode, event);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!isShow){
+            hideSystemUI();
+        }
     }
 
     @Override
@@ -243,23 +288,25 @@ public class ReadActivity extends BaseActivity {
 
     //白天与夜间模式切换
     public void initDayOrNigth(){
-        mDayOrNight = false;//TODO 配置获取
+        mDayOrNight = config.getDayOrNight();
         if (mDayOrNight){
-            dayornightBtn.setText("白天");
+            dayornightBtn.setText("夜晚");
         }else{
-            dayornightBtn.setText("夜间");
+            dayornightBtn.setText("白天");
         }
     }
     public void changeDayOrNight(){
         if (mDayOrNight){
             mDayOrNight = false;
-            dayornightBtn.setText("夜间");
+            dayornightBtn.setText("白天");
         } else{
             mDayOrNight = true;
-            dayornightBtn.setText("白天");
+            dayornightBtn.setText("夜晚");
         }
         //配置修改
         //控件修改
+        config.setDayOrNight(mDayOrNight);
+        pageFactory.setDayOrNight(mDayOrNight);
     }
 
     //设置功能显示
@@ -296,8 +343,11 @@ public class ReadActivity extends BaseActivity {
             case R.id.directoryBtn:
                 break;
             case R.id.dayornightBtn:
+                changeDayOrNight();
                 break;
             case R.id.pagemodeBtn:
+                hideReadSetting();
+                pageModeDialog.show();
                 break;
             case R.id.settingBtn:
                 break;
