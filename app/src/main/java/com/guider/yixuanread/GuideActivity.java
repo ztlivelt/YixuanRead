@@ -18,7 +18,7 @@ public class GuideActivity extends AppCompatActivity {
         getWindow().getDecorView().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(GuideActivity.this,MainActivity.class);
+                Intent intent = new Intent(GuideActivity.this,ShelfActivity.class);
                 startActivity(intent);
                 finish();
             }

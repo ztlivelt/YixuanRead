@@ -22,7 +22,7 @@ import java.util.List;
 
 import butterknife.Bind;
 
-public class MainActivity extends BaseActivity implements ShelfAdapter.ShelfListener{
+public class ShelfActivity extends BaseActivity implements ShelfAdapter.ShelfListener{
     @Bind(R.id.toolbar)
     Toolbar toolbar;
     @Bind(R.id.fabBtn)
@@ -44,7 +44,7 @@ public class MainActivity extends BaseActivity implements ShelfAdapter.ShelfList
 
     @Override
     public int getLayoutRes() {
-        return R.layout.activity_main;
+        return R.layout.activity_shelf;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class MainActivity extends BaseActivity implements ShelfAdapter.ShelfList
             @Override
             public void onClick(View v) {
                 //打开文件选择器 FileChooseActivity
-                FileChooseActivity.openFileChooseActivity(MainActivity.this);
+                FileChooseActivity.openFileChooseActivity(ShelfActivity.this);
             }
         });
         //书本点击打开ReadActivity

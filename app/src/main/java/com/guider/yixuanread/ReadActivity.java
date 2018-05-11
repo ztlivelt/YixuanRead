@@ -140,6 +140,33 @@ public class ReadActivity extends BaseActivity {
     }
     @Override
     protected void initListener() {
+        progressSb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            float pro;
+            // 触发操作，拖动
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                pro = (float) (progress / 10000.0);
+                showProgress(pro);
+            }
+
+            // 表示进度条刚开始拖动，开始拖动时候触发的操作
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            // 停止拖动时候
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                pageFactory.changeProgress(pro);
+            }
+        });
+        pageFactory.setPageEvent(new PageFactory.PageEvent() {
+            @Override
+            public void changeProgress(float progress) {
+                setSeekBarProgress(progress);
+            }
+        });
         bookPage.setTouchListener(new PageWidget.TouchListener() {
             @Override
             public void center() {
@@ -273,6 +300,13 @@ public class ReadActivity extends BaseActivity {
         if (!isShow){
             hideSystemUI();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        pageFactory.clear();
+        bookPage = null;
     }
 
     @Override
