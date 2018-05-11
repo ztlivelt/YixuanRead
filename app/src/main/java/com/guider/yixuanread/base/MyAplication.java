@@ -2,6 +2,8 @@ package com.guider.yixuanread.base;
 
 import android.app.Application;
 
+import com.guider.yixuanread.widget.PageFactory;
+
 import org.litepal.LitePal;
 
 /**
@@ -13,6 +15,8 @@ public class MyAplication extends Application {
     public void onCreate() {
         super.onCreate();
         initDb();
+        Config.createConfig(this);
+        PageFactory.createPageFactory(this);
     }
     private void initDb(){
         LitePal.initialize(this);

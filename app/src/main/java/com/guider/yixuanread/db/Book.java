@@ -14,6 +14,8 @@ public class Book extends DataSupport implements Serializable{
     private String bookpath;
     private long begin;
 
+    private String charset;
+
     public int getId() {
         return id;
     }
@@ -46,13 +48,11 @@ public class Book extends DataSupport implements Serializable{
         this.begin = begin;
     }
 
-    public String getCarset() {
-        return carset;
+    public String getCharset() {
+        return charset;
     }
 
-    public void setCarset(String carset) {
-        this.carset = carset;
+    public void setCharset(String charset) {
+        this.charset = charset;
     }
-
-    private String carset;
 }
