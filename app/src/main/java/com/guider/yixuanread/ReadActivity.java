@@ -383,6 +383,7 @@ public class ReadActivity extends BaseActivity {
             case R.id.nextTvBtn:
                 break;
             case R.id.directoryBtn:
+                MarkActivity.openMarkActivity(this);
                 break;
             case R.id.dayornightBtn:
                 changeDayOrNight();
