@@ -31,14 +31,14 @@ public class MarkAdapter extends RecyclerView.Adapter<MarkAdapter.MarkHolder> {
 
     @Override
     public MarkHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.activity_mark_fragment_item,null);
+        View view = LayoutInflater.from(context).inflate(R.layout.activity_mark_fragment_item, null);
         MarkHolder holder = new MarkHolder(view);
         return holder;
     }
 
     @Override
-    public void onBindViewHolder(MarkHolder holder, int position) {
-        BookMark bookMark = bookMarks.get(position);
+    public void onBindViewHolder(MarkHolder holder, final int position) {
+        final BookMark bookMark = bookMarks.get(position);
         holder.textMark.setText(bookMark.getText());
 //        long begin = bookMark.getBegin();
 //        float fPercent = (float) (begin * 1.0 / pageFactory.getBookLen());
@@ -46,6 +46,23 @@ public class MarkAdapter extends RecyclerView.Adapter<MarkAdapter.MarkHolder> {
 //        String strPercent = df.format(fPercent * 100) + "%";
 //        holder.progressTv.setText(strPercent);
 //        holder.markTimeTv.setText(bookMark.getTime().substring(0,16));
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    listener.openBookByMark(bookMark, position);
+                }
+            }
+        });
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (listener != null) {
+                    listener.deleteBookMark(bookMark, position);
+                }
+                return false;
+            }
+        });
     }
 
     @Override
@@ -53,10 +70,11 @@ public class MarkAdapter extends RecyclerView.Adapter<MarkAdapter.MarkHolder> {
         return bookMarks.size();
     }
 
-    class MarkHolder extends RecyclerView.ViewHolder{
+    class MarkHolder extends RecyclerView.ViewHolder {
         private TextView textMark;
         private TextView progressTv;
         private TextView markTimeTv;
+
         public MarkHolder(View view) {
             super(view);
             textMark = view.findViewById(R.id.text_mark);
@@ -64,7 +82,10 @@ public class MarkAdapter extends RecyclerView.Adapter<MarkAdapter.MarkHolder> {
             markTimeTv = view.findViewById(R.id.mark_time);
         }
     }
-    public interface MarkListener{
 
+    public interface MarkListener {
+        void openBookByMark(BookMark bookMark, int position);
+
+        void deleteBookMark(BookMark bookMark, int position);
     }
 }

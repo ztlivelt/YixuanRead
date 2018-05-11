@@ -20,7 +20,7 @@ import butterknife.Bind;
  * Created by zt on 2018/5/11.
  */
 
-public class CatalogFragment extends BaseFragment {
+public class CatalogFragment extends BaseFragment implements CatalogueAdapter.CatalogueListener{
     public static final String ARGUMENT = "argument";
 
 
@@ -51,11 +51,17 @@ public class CatalogFragment extends BaseFragment {
     protected void initData() {
         pageFactory = PageFactory.getInstance();
         catalogues.addAll(pageFactory.getDirectoryList());
-        adapter = new CatalogueAdapter(getContext(),catalogues,null);
+        adapter = new CatalogueAdapter(getContext(),catalogues,this);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         cataLogueRv.setLayoutManager(layoutManager);
         cataLogueRv.setAdapter(adapter);
+    }
+
+    @Override
+    public void openBookByCatalogue(BookCatalogue catalogue, int position) {
+        pageFactory.changeChapter(catalogue.getBookCatalogueStartPos());
+        getActivity().finish();
     }
 }

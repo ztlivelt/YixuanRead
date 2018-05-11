@@ -35,9 +35,17 @@ public class CatalogueAdapter extends RecyclerView.Adapter<CatalogueAdapter.Cata
     }
 
     @Override
-    public void onBindViewHolder(CatalogueHolder holder, int position) {
-        BookCatalogue catalogue = bookCatalogues.get(position);
+    public void onBindViewHolder(CatalogueHolder holder, final int position) {
+        final BookCatalogue catalogue = bookCatalogues.get(position);
         holder.catalogueName.setText(catalogue.getBookCatalogue());
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null){
+                    listener.openBookByCatalogue(catalogue,position);
+                }
+            }
+        });
     }
 
     @Override
@@ -53,6 +61,6 @@ public class CatalogueAdapter extends RecyclerView.Adapter<CatalogueAdapter.Cata
         }
     }
     public interface CatalogueListener{
-
+        void openBookByCatalogue(BookCatalogue catalogue,int position);
     }
 }

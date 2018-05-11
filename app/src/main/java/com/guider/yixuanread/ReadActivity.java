@@ -18,16 +18,24 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.guider.yixuanread.base.BaseActivity;
 import com.guider.yixuanread.base.Config;
 import com.guider.yixuanread.db.Book;
+import com.guider.yixuanread.db.BookMark;
 import com.guider.yixuanread.dialog.PageModeDialog;
 import com.guider.yixuanread.dialog.SettingDialog;
 import com.guider.yixuanread.widget.PageFactory;
 import com.guider.yixuanread.widget.PageWidget;
 
+import org.litepal.crud.DataSupport;
+
+import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -278,6 +286,32 @@ public class ReadActivity extends BaseActivity {
         int id = item.getItemId();
         switch (id){
             case R.id.action_add_bookmark: //添加书签
+                if (pageFactory.getCurrentPage() != null){
+                    List<BookMark> bookMarks = DataSupport.where("bookpath = ? and begin = ?", pageFactory.getBookPath(),pageFactory.getCurrentPage().getBegin() + "").find(BookMark.class);
+                    if (!bookMarks.isEmpty()){
+                        Toast.makeText(ReadActivity.this, "该书签已存在", Toast.LENGTH_SHORT).show();
+                    } else {
+                        BookMark bookMark = new BookMark();
+                        String word = "";
+                        for (String line : pageFactory.getCurrentPage().getLines()) {
+                            word += line;
+                        }
+                        try {
+                            SimpleDateFormat sf = new SimpleDateFormat(
+                                    "yyyy-MM-dd HH:mm ss");
+                            String time = sf.format(new Date());
+                            bookMark.setTime(time);
+                            bookMark.setBegin(pageFactory.getCurrentPage().getBegin());
+                            bookMark.setText(word);
+                            bookMark.setBookpath(pageFactory.getBookPath());
+                            bookMark.save();
+
+                            Toast.makeText(ReadActivity.this, "书签添加成功", Toast.LENGTH_SHORT).show();
+                        }  catch (Exception e) {
+                            Toast.makeText(ReadActivity.this, "添加书签失败", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
                 break;
             case R.id.action_read_book: //读书功能
                 break;
@@ -379,8 +413,10 @@ public class ReadActivity extends BaseActivity {
     public void onClick(View view){
         switch (view.getId()){
             case R.id.preTvBtn:
+                pageFactory.preChapter();
                 break;
             case R.id.nextTvBtn:
+                pageFactory.nextChapter();
                 break;
             case R.id.directoryBtn:
                 MarkActivity.openMarkActivity(this);
